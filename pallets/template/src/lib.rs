@@ -5,7 +5,6 @@
 //All of the pallets used in a runtime must be set to compile with the no_std features.
 // Re-export pallet items so that they can be accessed from the crate namespace.
 //pub use pallet::*;
-//
 #[frame_support::pallet]
 pub mod pallet {
 	use frame_support::pallet_prelude::*;
@@ -25,6 +24,18 @@ pub mod pallet {
 		/// now.
 		type WeightInfo;
 	}
+	// Pallets use events to inform users when important changes are made.
+	// Event documentation should end with an array that provides descriptive names for parameters.
+	// https://docs.substrate.io/v3/runtime/events-and-errors
+	#[pallet::event]
+	#[pallet::generate_deposit(pub(super) fn deposit_event)]
+	pub enum Event<T: Config> {
+		/// Event emitted when a claim has been created.
+		ClaimCreated { who: T::AccountId, claim: T::Hash },
+		/// Event emitted when a claim is revoked by the owner.
+		ClaimRevoked { who: T::AccountId, claim: T::Hash },
+	}
+	// Errors inform users that something went wrong.
 	#[pallet::error]
 	pub enum Error<T> {
 		/// The claim already exists.
@@ -39,17 +50,7 @@ pub mod pallet {
 		// Placeholder struct for the pallet weights
 		pub struct SubstrateWeight<T>(core::marker::PhantomData<T>);
 	}
-	// Pallets use events to inform users when important changes are made.
-	// Event documentation should end with an array that provides descriptive names for parameters.
-	// https://docs.substrate.io/v3/runtime/events-and-errors
-	#[pallet::event]
-	#[pallet::generate_deposit(pub(super) fn deposit_event)]
-	pub enum Event<T: Config> {
-		/// Event emitted when a proof has been claimed. [who, claim]
-		ClaimCreated(T::AccountId, Vec<u8>),
-		/// Event emitted when a claim is revoked by the owner. [who, claim]
-		ClaimRevoked(T::AccountId, Vec<u8>),
-	}
+
 	//Claim Storage
 	#[pallet::storage]
 	pub(super) type Claims<T: Config> =
